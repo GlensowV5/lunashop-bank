@@ -231,19 +231,21 @@ Citizen.CreateThread(function()
     end
 end)
 
---[[ CreateThread(function()
-    for i = 1, #Config.locations do
-        local blip = AddBlipForCoord(Config.locations[i])
-        SetBlipSprite(blip, Config.blipInfo.sprite)
-        SetBlipDisplay(blip, 4)
-        SetBlipScale(blip, Config.blipInfo.scale)
-        SetBlipColour(blip, Config.blipInfo.color)
-        SetBlipAsShortRange(blip, true)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentSubstringPlayerName(tostring(Config.blipInfo.name))
-        EndTextCommandSetBlipName(blip)
-    end
-end) ]]
+if Config.blips == true then
+    CreateThread(function()
+        for i = 1, #Config.locations do
+            local blip = AddBlipForCoord(Config.locations[i])
+            SetBlipSprite(blip, Config.blipInfo.sprite)
+            SetBlipDisplay(blip, 4)
+            SetBlipScale(blip, Config.blipInfo.scale)
+            SetBlipColour(blip, Config.blipInfo.color)
+            SetBlipAsShortRange(blip, true)
+            BeginTextCommandSetBlipName('STRING')
+            AddTextComponentSubstringPlayerName(tostring(Config.blipInfo.name))
+            EndTextCommandSetBlipName(blip)
+        end
+    end)
+end
 
 if Config.useTarget then
     if Config.target == 'qb' then
