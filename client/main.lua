@@ -326,35 +326,69 @@ if Config.useTarget then
 end
 
 if not Config.useTarget then
-    CreateThread(function()
-        for i = 1, #Config.locations do
-            local zone = CircleZone:Create(Config.locations[i], 3.0, {
-                name = 'bank_' .. i,
+    if Config.drawtext == 'qb' then
+        CreateThread(function()
+            for i = 1, #Config.locations do
+                local zone = CircleZone:Create(Config.locations[i], 3.0, {
+                    name = 'bank_' .. i,
+                    debugPoly = false,
+                })
+                zones[#zones + 1] = zone
+            end
+
+            local combo = ComboZone:Create(zones, {
+                name = 'bank_combo',
                 debugPoly = false,
             })
-            zones[#zones + 1] = zone
-        end
 
-        local combo = ComboZone:Create(zones, {
-            name = 'bank_combo',
-            debugPoly = false,
-        })
-
-        combo:onPlayerInOut(function(isPointInside)
-            if isPointInside then
-                exports['qb-core']:DrawText('Open Bank')
-                CreateThread(function()
-                    while isPointInside do
-                        Wait(0)
-                        if IsControlJustPressed(0, 38) then
-                            OpenBank()
-                            break
+            combo:onPlayerInOut(function(isPointInside)
+                if isPointInside then
+                    exports['qb-core']:DrawText('Open Bank')
+                    CreateThread(function()
+                        while isPointInside do
+                            Wait(0)
+                            if IsControlJustPressed(0, 38) then
+                                OpenBank()
+                                break
+                            end
                         end
-                    end
-                end)
-            else
-                exports['qb-core']:HideText()
-            end
+                    end)
+                else
+                    exports['qb-core']:HideText()
+                end
+            end)
         end)
-    end)
+    elseif Config.drawtext == 'ox' then
+        CreateThread(function()
+            for i = 1, #Config.locations do
+                local zone = CircleZone:Create(Config.locations[i], 3.0, {
+                    name = 'bank_' .. i,
+                    debugPoly = false,
+                })
+                zones[#zones + 1] = zone
+            end
+
+            local combo = ComboZone:Create(zones, {
+                name = 'bank_combo',
+                debugPoly = false,
+            })
+
+            combo:onPlayerInOut(function(isPointInside)
+                if isPointInside then
+                    lib.showTextUI('[E] - Open Bank')
+                    CreateThread(function()
+                        while isPointInside do
+                            Wait(0)
+                            if IsControlJustPressed(0, 38) then
+                                OpenBank()
+                                break
+                            end
+                        end
+                    end)
+                else
+                    lib.hideTextUI()
+                end
+            end)
+        end)
+    end
 end
