@@ -246,45 +246,83 @@ end)
 end) ]]
 
 if Config.useTarget then
-    CreateThread(function()
-        for i = 1, #Config.locations do
-            exports['qb-target']:AddCircleZone('bank_' .. i, Config.locations[i], 1.0, {
-                name = 'bank_' .. i,
-                useZ = true,
-                debugPoly = false,
-            }, {
-                options = {
+    if Config.target == 'qb' then
+        CreateThread(function()
+            for i = 1, #Config.locations do
+                exports['qb-target']:AddCircleZone('bank_' .. i, Config.locations[i], 1.0, {
+                    name = 'bank_' .. i,
+                    useZ = true,
+                    debugPoly = false,
+                }, {
+                    options = {
+                        {
+                            icon = 'fas fa-university',
+                            label = 'Open Bank',
+                            action = function()
+                                OpenBank()
+                            end,
+                        }
+                    },
+                    distance = 1.5
+                })
+            end
+        end)
+
+        CreateThread(function()
+            for i = 1, #Config.atmModels do
+                local atmModel = Config.atmModels[i]
+                exports['qb-target']:AddTargetModel(atmModel, {
+                    options = {
+                        {
+                            icon = 'fas fa-university',
+                            label = 'Open ATM',
+                            item = 'bank_card',
+                            action = function()
+                                OpenATM()
+                            end,
+                        }
+                    },
+                    distance = 1.5
+                })
+            end
+        end)
+    elseif Config.target == 'ox' then
+        CreateThread(function()
+            for i = 1, #Config.locations do
+                local data = {
+                    coords = Config.locations[i],
+                    radius = 1.5,
+                    options = {
+                        {
+                            icon = 'fas fa-university',
+                            label = 'Open Bank',
+                            onSelect = function()
+                                OpenBank()
+                            end
+                        }
+                    }
+                }
+                exports.ox_target:addSphereZone(data)
+            end
+        end)
+
+        CreateThread(function()
+            for i = 1, #Config.atmModels do
+                local atmModel = Config.atmModels[i]
+                local data = {
                     {
                         icon = 'fas fa-university',
                         label = 'Open Bank',
-                        action = function()
+                        distance = 1.5,
+                        onSelect = function()
                             OpenBank()
-                        end,
+                        end
                     }
-                },
-                distance = 1.5
-            })
-        end
-    end)
-
-    CreateThread(function()
-        for i = 1, #Config.atmModels do
-            local atmModel = Config.atmModels[i]
-            exports['qb-target']:AddTargetModel(atmModel, {
-                options = {
-                    {
-                        icon = 'fas fa-university',
-                        label = 'Open ATM',
-                        item = 'bank_card',
-                        action = function()
-                            OpenATM()
-                        end,
-                    }
-                },
-                distance = 1.5
-            })
-        end
-    end)
+                }
+                exports.ox_target:addModel(atmModel, data)
+            end
+        end)
+    end
 end
 
 if not Config.useTarget then
